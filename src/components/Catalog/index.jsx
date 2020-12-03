@@ -4,6 +4,7 @@ import { CartContext } from "../../context/Cart";
 import Checkbox from "../Checkbox";
 import Product from "../Product";
 import Small_banner from "../Small_banner";
+import qs from "qs";
 
 const Catalog = () => {
   const { addToCart } = useContext(CartContext);
@@ -12,14 +13,7 @@ const Catalog = () => {
 
   const [keyword, setKeyword] = useState({});
 
-  const [search, setSearch] = useState("");
-
-  const onHandleChange = (e) => {
-    setSearch(e.target.value);
-  };
-
   const onHandleSubmit = (e) => {
-    console.log(keyword);
     e.preventDefault();
     const { name, value } = e.target;
     setKeyword({
@@ -35,22 +29,17 @@ const Catalog = () => {
   };
 
   useEffect(() => {
-    if (
-      keyword.platform &&
-      keyword.platform !== "" &&
-      keyword.platform !== null
-    ) {
-      let API_URL = `http://localhost:1337/platforms/${keyword.platform}`;
-      fetch(API_URL)
-        .then((response) => response.json())
-        .then((data) => setProduct(data.products));
-    } else if (keyword.sort && keyword.sort !== "" && keyword.sort !== null) {
-      let API_URL = `http://localhost:1337/products/?_sort=price:${keyword.sort}`;
-      fetch(API_URL)
-        .then((response) => response.json())
-        .then((data) => setProduct(data));
-    } else {
-      let API_URL = "http://localhost:1337/products";
+    if (keyword !== {}) {
+      let API_URL = `http://localhost:1337/products?`;
+      if (keyword.platform) {
+        API_URL = `${API_URL}_where[0][platform.id]=${keyword.platform}&`;
+      }
+      if (keyword.name) {
+        API_URL = `${API_URL}_where[1][name]=${keyword.name}&`;
+      }
+      if (keyword.sort) {
+        API_URL = `${API_URL}_sort=price:${keyword.sort}&`;
+      }
       fetch(API_URL)
         .then((response) => response.json())
         .then((data) => setProduct(data));
@@ -58,16 +47,6 @@ const Catalog = () => {
   }, [keyword]);
 
   const count = products.length;
-
-  if (keyword.name && keyword.name !== "") {
-    const filterIteam = products.filter((item) => {
-      item.name.toLowerCase().includes(keyword.name.toLowerCase());
-    });
-  }
-
-  // const filterIteam = products.filter((item) => {
-  //   item.name.toLowerCase().includes(search.toLowerCase());
-  // });
 
   return (
     <div>

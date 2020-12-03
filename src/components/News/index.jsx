@@ -19,12 +19,12 @@ const News = () => {
       platform.platform !== "" &&
       platform.platform !== null
     ) {
-      const API_URL = `http://localhost:1337/platforms/${platform.platform}`;
+      const API_URL = `http://localhost:1337/posts?_where[0][platform.id]=${platform.platform}`;
       fetch(API_URL)
         .then((response) => response.json())
-        .then((data) => setNews(data.posts));
+        .then((data) => setNews(data));
     } else {
-      const API_URL = "http://localhost:1337/posts";
+      const API_URL = `http://localhost:1337/posts`;
       fetch(API_URL)
         .then((response) => response.json())
         .then((data) => setNews(data));
@@ -55,21 +55,6 @@ const News = () => {
               <option value="3">PLAYSTATION</option>
             </select>
           </div>
-          {/* 
-          <div>
-            Sort By :{" "}
-            <select
-              name=""
-              id=""
-              onChange={onHandleChange}
-              className="rounded-md bg-gray-900 border-purple-600 border"
-            >
-              <option value="">Choose orderby</option>
-              <option value="desc">DESC</option>
-              <option value="asc">ASC</option>
-              <option value="">2</option>
-            </select>
-          </div> */}
         </div>
         <div>Found {count} posts</div>
       </div>
