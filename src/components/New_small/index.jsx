@@ -14,7 +14,7 @@ const New_small = ({ data }) => {
         border-gray-400 border-2
         "
       >
-        PC
+        {data.platform.name}
       </button>
       <a href="" className="hover:underline hover:text-purple-700">
         <p className="text-2xl truncate py-5"> {data.title}</p>
