@@ -12,6 +12,7 @@ import Detail_product from "./components/Detail_product";
 import ScrollToTop from "./ScrollToTop ";
 import Cart from "./components/Cart";
 import { CartProvider } from "./context/Cart";
+import Detail_post from "./components/Detail_post";
 // import bg from "./image/bg.jpg";
 
 function App() {
@@ -45,14 +46,11 @@ function App() {
             <Route exact path="/products/:id">
               <Detail_product />
             </Route>
-            <Route exact path="/products/platforms/:id_pl">
-              <Catalog />
-            </Route>
-            <Route exact path="/products/sort/:type">
-              <Catalog />
-            </Route>
             <Route exact path="/cart">
               <Cart />
+            </Route>
+            <Route exact path="/posts/:id">
+              <Detail_post />
             </Route>
           </Switch>
         </Router>

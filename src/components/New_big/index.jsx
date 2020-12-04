@@ -1,9 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const New_big = () => {
+const New_big = ({ data }) => {
   return (
     <div className="bg-img-big-new bg-auto h-auto ">
-      <a href="">
+      <Link to={`/posts/${data.id}`}>
         <div className="text-white px-6 pb-6 pt-40">
           <button
             className="bg-purple-800 bg-opacity-25 px-6 rounded-md py-1 text-base 
@@ -14,19 +15,19 @@ const New_big = () => {
             NFS
           </button>
           <div className="py-4">
-            <a href="">
+            <Link to={`/posts/${data.id}`}>
               <p className="text-2xl hover:text-blue-200 transition duration-500 ease-in-out font-light pr-6 truncate hover:underline">
-                New hot race from your favorite computer games studio
+                {data.title}
               </p>
-            </a>
+            </Link>
           </div>
 
           <div className="flex justify-between">
-            <div>2 hours ago</div>
-            <div>17 cmts</div>
+            <div>{data.time} hours ago</div>
+            <div>{data.comments} cmts</div>
           </div>
         </div>
-      </a>
+      </Link>
     </div>
   );
 };
