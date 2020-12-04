@@ -1,12 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // import img from "../../image/posts/3.jpg";
 
 const New_small = ({ data }) => {
   return (
     <div className="text-white border border-solid border-gray-800 p-5 rounded">
-      <a href="">
+      <Link to={`/posts/${data.id}`}>
         <img src={data.img} alt="" className="w-auto rounded" />
-      </a>
+      </Link>
       <button
         disabled
         className="bg-purple-800 bg-opacity-25 px-8 rounded-md py-1 text-sm 
@@ -16,9 +17,13 @@ const New_small = ({ data }) => {
       >
         {data.platform.name}
       </button>
-      <a href="" className="hover:underline hover:text-purple-700">
+      <Link
+        to={`/posts/${data.id}`}
+        className="hover:underline hover:text-purple-700"
+      >
         <p className="text-2xl truncate py-5"> {data.title}</p>
-      </a>
+      </Link>
+
       <div className="flex justify-between">
         <div className="flex items-center">
           <div className="text-sm text-purple-700 ">
