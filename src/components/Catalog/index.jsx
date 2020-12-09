@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { CartContext } from "../../context/Cart";
-import Checkbox from "../Checkbox";
 import Product from "../Product";
 import Small_banner from "../Small_banner";
-import qs from "qs";
+import Pagination from "../Pagination";
 
 const Catalog = () => {
   const { addToCart } = useContext(CartContext);
@@ -13,12 +11,23 @@ const Catalog = () => {
 
   const [keyword, setKeyword] = useState({});
 
+  const [count, setCount] = useState(0);
+
+  const [paginate, setPaginate] = useState({
+    limit: 4,
+    start: 0,
+  });
+
   const onHandleSubmit = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
     setKeyword({
       ...keyword,
       [name]: value,
+    });
+    setPaginate({
+      limit: 4,
+      start: 0,
     });
   };
 
@@ -28,9 +37,17 @@ const Catalog = () => {
     setKeyword({});
   };
 
+  const handleOnPageChange = (newPage) => {
+    setPaginate({
+      limit: 4,
+      start: newPage,
+    });
+  };
+
   useEffect(() => {
     if (keyword !== {}) {
       let API_URL = `http://localhost:1337/products?`;
+
       if (keyword.platform) {
         API_URL = `${API_URL}_where[0][platform.id]=${keyword.platform}&`;
       }
@@ -40,13 +57,23 @@ const Catalog = () => {
       if (keyword.sort) {
         API_URL = `${API_URL}_sort=price:${keyword.sort}&`;
       }
-      fetch(API_URL)
-        .then((response) => response.json())
-        .then((data) => setProduct(data));
-    }
-  }, [keyword]);
 
-  const count = products.length;
+      const getData = async () => {
+        API_URL = `${API_URL}_start=${
+          paginate.start === 0 ? 0 : paginate.start * paginate.limit
+        }&_limit=${paginate.limit}`;
+        console.log(API_URL);
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        await setProduct(data);
+        await setCount(products.length);
+        // fetch(API_URL)
+        // .then((response) => response.json())
+        // .then((data) => setProduct(data));
+      };
+      getData();
+    }
+  }, [keyword, paginate]);
 
   return (
     <div>
@@ -128,30 +155,12 @@ const Catalog = () => {
                   <option value="3">PLAYSTATION</option>
                 </select>
               </div>
-
-              {/* <div className="py-2">
-                <label htmlFor="" className="text-base">
-                  Genres:
-                </label>
-                <Checkbox title={"Action"} />
-                <Checkbox title={"Adventure"} />
-                <Checkbox title={"Fighting"} />
-                <Checkbox title={"Platform"} />
-                <Checkbox title={"Racing"} />
-                <Checkbox title={"RPG"} />
-                <Checkbox title={"Sports"} />
-                <Checkbox title={"Strategy"} />
-              </div> */}
-              {/* 
-              <button className="bg-green-500 px-8 rounded-md py-2 text-base font-bold font-mono hover:bg-purple-500 transition duration-500 ease-in-out mt-6">
-                Accept
-              </button> */}
             </form>
           </div>
           <div className="col-span-4 ">
             <div className="grid grid-cols-4 gap-5">
               {products.map((product, index) => {
-                if (product.status == 1) {
+                if (product.status === 1) {
                   return (
                     <Product
                       data={product}
@@ -182,32 +191,12 @@ const Catalog = () => {
                 >
                   {count} from {count}
                 </button>
-                <div className="flex">
-                  <a href="#">
-                    <button
-                      className="bg-purple-800 bg-opacity-25 p-2  rounded-md text-sm 
-                font-bold font-mono border-gray-700 border mr-3"
-                    >
-                      1
-                    </button>
-                  </a>
-                  <a href="#">
-                    <button
-                      className="bg-purple-800 bg-opacity-25 p-2  rounded-md text-sm 
-                font-bold font-mono border-gray-700 border mr-3"
-                    >
-                      2
-                    </button>
-                  </a>
-                  <a href="#">
-                    <button
-                      className="bg-purple-800 bg-opacity-25 p-2  rounded-md text-sm 
-                font-bold font-mono border-gray-700 border mr-3"
-                    >
-                      3
-                    </button>
-                  </a>
-                </div>
+                <Pagination
+                  onPageChange={handleOnPageChange}
+                  count={count}
+                  start={paginate.start}
+                  limit={paginate.limit}
+                />
               </div>
             </div>
           </div>
