@@ -1,15 +1,33 @@
 import React, { useEffect, useState } from "react";
 import New_small from "../New_small";
+import Pagination from "../Pagination";
 import Small_banner from "../Small_banner";
+import axios from "axios";
 
 const News = () => {
   const [platform, setPlatform] = useState({});
+  const [news, setNews] = useState([]);
+  const [paginate, setPaginate] = useState({
+    limit: 3,
+    start: 0,
+  });
 
   const onHandleChange = (e) => {
     const { name, value } = e.target;
     setPlatform({
       ...platform,
       [name]: value,
+    });
+    setPaginate({
+      limit: 3,
+      start: 0,
+    });
+  };
+
+  const handlePageChange = (newPage) => {
+    setPaginate({
+      limit: 3,
+      start: newPage,
     });
   };
 
@@ -19,19 +37,26 @@ const News = () => {
       platform.platform !== "" &&
       platform.platform !== null
     ) {
-      const API_URL = `http://localhost:1337/posts?_where[0][platform.id]=${platform.platform}`;
+      const API_URL = `http://localhost:1337/posts?_where[0][platform.id]=${
+        platform.platform
+      }&_start=${
+        paginate.start === 0 ? 0 : paginate.start * paginate.limit
+      }&_limit=${paginate.limit}`;
       fetch(API_URL)
         .then((response) => response.json())
         .then((data) => setNews(data));
     } else {
-      const API_URL = `http://localhost:1337/posts`;
+      const API_URL = `http://localhost:1337/posts?_start=${
+        paginate.start === 0 ? 0 : paginate.start * paginate.limit
+      }&_limit=${paginate.limit}`;
+
       fetch(API_URL)
         .then((response) => response.json())
-        .then((data) => setNews(data));
+        .then((data) => {
+          setNews(data);
+        });
     }
-  }, [platform]);
-
-  const [news, setNews] = useState([]);
+  }, [platform, paginate]);
 
   const count = news.length;
 
@@ -74,32 +99,13 @@ const News = () => {
         >
           {count} from {count}
         </button>
-        <div className="flex">
-          <a href="#">
-            <button
-              className="bg-purple-800 bg-opacity-25 p-2  rounded-md text-sm 
-                font-bold font-mono border-gray-700 border mr-3"
-            >
-              1
-            </button>
-          </a>
-          <a href="#">
-            <button
-              className="bg-purple-800 bg-opacity-25 p-2  rounded-md text-sm 
-                font-bold font-mono border-gray-700 border mr-3"
-            >
-              2
-            </button>
-          </a>
-          <a href="#">
-            <button
-              className="bg-purple-800 bg-opacity-25 p-2  rounded-md text-sm 
-                font-bold font-mono border-gray-700 border mr-3"
-            >
-              3
-            </button>
-          </a>
-        </div>
+
+        <Pagination
+          start={paginate.start}
+          onPageChange={handlePageChange}
+          count={count}
+          limit={paginate.limit}
+        />
       </div>
     </div>
   );
